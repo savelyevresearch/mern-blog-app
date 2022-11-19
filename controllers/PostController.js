@@ -78,14 +78,6 @@ export const remove = async (req, res) => {
 
 export const update = async (req, res) => {
     try {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            res.status(400).json(errors.array());
-
-            return;
-        }
-
         const postId = req.params.id;
 
         await PostModel.updateOne(
@@ -113,14 +105,6 @@ export const update = async (req, res) => {
 
 export const create = async (req, res) => {
     try {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            res.status(400).json(errors.array());
-
-            return;
-        }
-
         const doc = new PostModel({
             title: req.body.title,
             text: req.body.text,
