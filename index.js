@@ -3,11 +3,12 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 
 import { registerValidation, loginValidation } from './validations/auth.js';
+
 import { postValidation } from './validations/post.js';
-import checkAuth from './utils/checkAuth.js';
-import { register, login, getMe } from './controllers/UserController.js';
-import { create, getAll, getOne, remove, update } from './controllers/PostController.js';
-import handleValidationErrors from './utils/handleValidationErrors.js';
+
+import { UserController, PostController } from './controllers/index.js';
+
+import { handleValidationErrors, checkAuth } from './utils/index.js';
 
 const mongodbClusterUsername = process.env.MONGODB_CLUSTER_USERNAME;
 const mongodbClusterPassword = process.env.MONGODB_CLUSTER_PASSWORD;
@@ -18,8 +19,6 @@ mongoose
     .then(() => console.log('DB is OK'))
     .catch(() => console.error('DB connection error'));
 
-
-// Express app initializing
 const app = express();
 
 const storage = multer.diskStorage({
@@ -36,10 +35,10 @@ const upload = multer({ storage });
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-app.post('/auth/login', loginValidation, handleValidationErrors, login);
-app.post('/auth/register', registerValidation, handleValidationErrors, register);
+app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login);
+app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register);
 
-app.get('/auth/me', checkAuth, getMe);
+app.get('/auth/me', checkAuth, UserController.getMe);
 
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     res.json({
@@ -47,13 +46,12 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     });
 });
 
-app.post('/posts', checkAuth, postValidation, handleValidationErrors, create);
-app.delete('/posts/:id', checkAuth, remove);
-app.patch('/posts/:id', checkAuth, postValidation, handleValidationErrors, update);
-app.get('/posts', getAll);
-app.get('/posts/:id', getOne);
+app.post('/posts', checkAuth, postValidation, handleValidationErrors, PostController.create);
+app.delete('/posts/:id', checkAuth, PostController.remove);
+app.patch('/posts/:id', checkAuth, postValidation, handleValidationErrors, PostController.update);
+app.get('/posts', PostController.getAll);
+app.get('/posts/:id', PostController.getOne);
 
-// Port listening for the request accepting
 app.listen(4444, (err) => {
     if (err) {
         console.error(err);

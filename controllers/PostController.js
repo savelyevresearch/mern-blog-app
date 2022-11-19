@@ -22,7 +22,7 @@ export const getOne = async (req, res) => {
 
         PostModel.findOneAndUpdate({ _id: postId }, { $inc: { viewsCount: 1 } }, { returnDocument: 'after' }, (err, doc) => {
             if (err) {
-                console.error(error);
+                console.error(err);
 
                 res.status(500).json({
                     message: 'Failed to get an article',
