@@ -9,6 +9,8 @@ import { registerValidation, loginValidation } from './validations/auth.js';
 
 import UserModel from './models/User.js';
 
+import checkAuth from './utils/checkAuth.js';
+
 const mongodbClusterUsername = process.env.MONGODB_CLUSTER_USERNAME;
 const mongodbClusterPassword = process.env.MONGODB_CLUSTER_PASSWORD;
 
@@ -106,11 +108,25 @@ app.post('/auth/register', registerValidation, async (req, res) => {
     }
 });
 
-app.get('/auth/me', (req, res) => {
+app.get('/auth/me', checkAuth, async (req, res) => {
     try {
-        
+        const user = await UserModel.findById(req.userId);
+
+        if (!user) {
+            res.status(404).json({ message: 'Something went wrong...' });
+
+            return;
+        }
+
+        const { passwordHash, ...userData } = user._doc;
+
+        res.json({ ...userData });
     } catch (error) {
-        
+        console.error(error);
+
+        res.status(500).json({
+            message: 'Something went wrong...',
+        });
     }
 });
 
