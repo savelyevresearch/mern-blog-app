@@ -11,9 +11,10 @@ import handleValidationErrors from './utils/handleValidationErrors.js';
 
 const mongodbClusterUsername = process.env.MONGODB_CLUSTER_USERNAME;
 const mongodbClusterPassword = process.env.MONGODB_CLUSTER_PASSWORD;
+const mongodbClusterDomainName = process.env.MONGODB_CLUSTER_DOMAIN_NAME;
 
 mongoose
-    .connect(`mongodb+srv://${mongodbClusterUsername}:${mongodbClusterPassword}@mern-social-network-clu.dya7ilm.mongodb.net/blog?retryWrites=true&w=majority`)
+    .connect(`mongodb+srv://${mongodbClusterUsername}:${mongodbClusterPassword}@${mongodbClusterDomainName}/blog?retryWrites=true&w=majority`)
     .then(() => console.log('DB is OK'))
     .catch(() => console.error('DB connection error'));
 
