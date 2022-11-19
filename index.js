@@ -5,7 +5,7 @@ import { registerValidation, loginValidation } from './validations/auth.js';
 import { postCreateValidation } from './validations/post.js';
 import checkAuth from './utils/checkAuth.js';
 import { register, login, getMe } from './controllers/UserController.js';
-import { create } from './controllers/PostController.js';
+import { create, getAll, getOne, remove, update } from './controllers/PostController.js';
 
 const mongodbClusterUsername = process.env.MONGODB_CLUSTER_USERNAME;
 const mongodbClusterPassword = process.env.MONGODB_CLUSTER_PASSWORD;
@@ -28,6 +28,10 @@ app.post('/auth/register', registerValidation, register);
 app.get('/auth/me', checkAuth, getMe);
 
 app.post('/posts', checkAuth, postCreateValidation, create);
+app.get('/posts', getAll);
+app.get('/posts/:id', getOne);
+app.delete('/posts/:id', checkAuth, remove);
+app.patch('/posts/:id', checkAuth, update);
 
 // Port listening for the request accepting
 app.listen(4444, (err) => {
